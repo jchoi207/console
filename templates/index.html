@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href=style.css>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+
+
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+
+    <div class="sidebar-left">
+        <a href="#">Home</a>
+        <a href="#">Optimization</a>
+        <a href="#">Dividends</a>
+        <a href="#">Dip Finder</a>
+    </div>
+
+
+    <div class="main-page">
+        <h1>Home View</h1>
+
+        <h2>Your Positions</h2>
+        <div class="grid-positions">
+            {% for idx, ticker in enumerated_tickers %}
+            <div class="grid-position">
+                <div class="position">
+                    Position {{ idx }}: {{ ticker }}
+                </div>
+                <div class="statistic">
+                    Daily P/L: {{((daily_close[idx-1] - prev_close[idx-1]) * portfolio[ticker]["Qty"])|round()}}$
+                </div>
+                <div class="statistic">
+                    Per Share: {{((daily_pl[idx-1]*100))|round()}}%
+                </div>
+                <!-- Request a dynamic image for each ticker -->
+                <img class="time-series" src="{{ url_for('static', filename=imgs[idx-1]) }}" alt="VOO Plot">
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="sidebar-right">
+        <div class="general_statistics">
+            <section class="pyscript">
+                <script type="py">
+                    from pyscript import display
+                    from datetime import datetime
+                    now = datetime.now()
+                    display(now.strftime("%m/%d/%Y, %H:%M:%S"))
+                </script>
+            </section>
+
+
+            <a>Exchange Rate {{xr|round()}} (as of {{last_date}})</a>
+
+        </div>
+
+        <a>Daily P/L: </a>
+        <a>Weekly P/L</a>
+        <a>Open P/L: {{open_pl|round()}}</a>
+        <a>Total P/L: {{total_pl|round()}}</a>
+        <a>Dividends: {{total_div|round()}}</a>
+
+    </div>
+
+    <!-- <py-script>
+        from ticker import tickers
+        from js import document
+        # tickers = ['AAPL', 'GOOGL', 'AMZN', 'MSFT', 'TSLA', 'FB']
+        content_div = document.querySelector('.grid-positions')
+
+        for i, ticker in enumerate(tickers):
+        grid_item = document.createElement('div')
+        grid_item.className = 'grid-item'
+        grid_item.innerText = f'Item {i + 1}: {ticker}'
+        content_div.appendChild(grid_item)
+    </py-script> -->
+
+</body>
+
+</html>
